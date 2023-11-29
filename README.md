@@ -21,6 +21,5 @@ Xavier Loh Yuan Shao - TCP SYN Flood, Report
 Chua Wee Chye Ryan - Monitor mode, Report
 
 Feedback:
-Little help/feedback was provided to us as none of the professors were able to answer our doubts/challenges that we faced. One example was our challenge on getting wifi deauthentication to work as we were unable to get the pico w to send 802.11 protocol data frames. 
-
+Little help/feedback was provided to us as none of the professors were able to answer our doubts/challenges that we faced. One example was our challenge on getting wifi deauthentication to work as we were unable to get the pico w to send 802.11 protocol data frames. Additionally, there was little resources provided to us to assist us in our cyber security pico project. 
 
